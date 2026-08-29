@@ -13,14 +13,16 @@
     <header>
         <h1>Subscription Tracker</h1>
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-
         <p>Take control of where your money goes.</p>
     </header>
 
     <main>
+
+        {% if error %}
+        <div class="error">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
 
         <section class="card">
             <h2>Add a Subscription</h2>
