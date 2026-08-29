@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Tracker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Subscription Tracker</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <p>Take control of where your money goes.</p>
+    </header>
+
+    <main>
+
+        <section class="card">
+            <h2>Add a Subscription</h2>
+
+            <form action="/add" method="post">
+
+                <label for="name">Subscription Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="subscription_name"
+                    placeholder="e.g. Netflix"
+                    required
+                >
+
+                <label for="category">Category</label>
+                <input
+                    type="text"
+                    id="category"
+                    name="subscription_category"
+                    placeholder="e.g. Entertainment"
+                    required
+                >
+
+                <label for="cost">Monthly Cost</label>
+                <input
+                    type="number"
+                    id="cost"
+                    name="subscription_cost"
+                    placeholder="e.g. ₹299"
+                    min="1"
+                    required
+                >
+
+                <button type="submit">Add Subscription</button>
+
+            </form>
+        </section>
+
+
+        <section class="card">
+
+            <h2>Your Subscriptions</h2>
+
+            {% if subscriptions %}
+
+                {% for subscription in subscriptions %}
+
+                    <div class="subscription">
+
+                        <div>
+                            <h3>{{ subscription["Name"] }}</h3>
+                            <p>{{ subscription["Category"] }}</p>
+                        </div>
+
+                        <div class="price">
+                            ₹{{ subscription["Cost"] }}/month
+                        </div>
+
+                        <form
+                            action="/remove/{{ loop.index0 }}"
+                            method="post"
+                        >
+                            <button type="submit" class="delete">
+                                Remove
+                            </button>
+                        </form>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="empty">
+                    No subscriptions yet. Add your first one above!
+                </p>
+
+            {% endif %}
+
+        </section>
+
+
+        {% if overlapping %}
+
+        <section class="card overlap">
+
+            <h2>⚠️ Potential Overlap</h2>
+
+            <p>
+                You have multiple subscriptions in the same category.
+            </p>
+
+            {% for category, subs in overlapping.items() %}
+
+                <h3>{{ category }}</h3>
+
+                {% for subscription in subs %}
+
+                    <p>
+                        <strong>{{ subscription["Name"] }}</strong>
+                        — ₹{{ subscription["Cost"] }}/month
+                    </p>
+
+                {% endfor %}
+
+                <p>
+                    You have {{ subs|length }} subscriptions in this category.
+                </p>
+
+                <p>
+                    💡 Consider reviewing whether you need all of them.
+                </p>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+
+        <section class="card summary">
+
+            <h2>Monthly Summary</h2>
+
+            {% set total = namespace(value=0) %}
+
+            {% for subscription in subscriptions %}
+                {% set total.value = total.value + subscription["Cost"] %}
+            {% endfor %}
+
+            <div class="summary-number">
+                ₹{{ total.value }}
+            </div>
+
+            <p>spent every month</p>
+
+            <div class="yearly">
+                ₹{{ total.value * 12 }} per year
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Subscription Tracker • Built with Python + Flask</p>
+    </footer>
+
+</body>
+</html>
