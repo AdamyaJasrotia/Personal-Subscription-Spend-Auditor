@@ -150,3 +150,13 @@ footer {
 .overlap h3 {
     margin-top: 20px;
 }
+.error {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffe69c;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-weight: bold;
+    text-align: center;
+}
